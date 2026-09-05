@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Trade Hub — Admin Panel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { sans: ['Inter','-apple-system','BlinkMacSystemFont','sans-serif'] },
+    colors: { brand: { blue:'#007AFF', purple:'#5856D6', red:'#FF3B30', bg:'#F2F2F7', orange:'#FF9500', green:'#34C759' } }
+  }}};
+</script>
+
+<style>
+  body { 
+    background-color: #e2e8f0; 
+    background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
+    margin: 0; font-family: 'Inter', sans-serif; color: #1e293b; -webkit-tap-highlight-color: transparent; 
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } 
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  .glass-panel { 
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); 
+  }
+  
+  .glass-input { 
+    background: rgba(255,255,255,0.9); border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; 
+    width: 100%; outline: none; font-size: 14px; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .glass-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.02); }
+  
+  .btn-primary { 
+    background: linear-gradient(135deg, #2563eb, #4f46e5); color: #fff; border-radius: 14px; font-weight: 700; padding: 12px 20px; 
+    transition: all 0.2s; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); border: none; cursor: pointer; 
+  }
+  .btn-primary:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  
+  .btn-soft { 
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; font-weight: 600; padding: 10px 16px; 
+    cursor: pointer; transition: all 0.2s; color: #475569; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  }
+  .btn-soft:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+  .btn-soft:active { transform: scale(0.96); }
+  
+  .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border-radius: 14px; font-weight: 700; padding: 10px 16px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.4); }
+  .btn-danger:active { transform: scale(0.96); }
+  .btn-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-radius: 14px; font-weight: 700; padding: 10px 16px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.4); }
+  .btn-green:active { transform: scale(0.96); }
+  
+  .click-anim { transition: transform 0.1s; cursor: pointer; } .click-anim:active { transform: scale(0.95); }
+  
+  .nav-item { color: #64748b; cursor: pointer; transition: 0.2s; border-radius: 14px; }
+  .nav-item:hover { background: rgba(255,255,255,0.5); color: #334155; }
+  .nav-item.active { color: #2563eb; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,0.8); }
+  
+  .badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid rgba(255,255,255,0.5); }
+  .badge-green { background: #dcfce7; color: #166534; border-color: #bbf7d0; } 
+  .badge-gray { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+  .badge-orange { background: #ffedd5; color: #9a3412; border-color: #fed7aa; } 
+  .badge-red { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .badge-blue { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; } 
+  .badge-purple { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+  
+  .spinner { border: 3px solid rgba(0,0,0,0.05); border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+  .modal-box { background: #ffffff; border-radius: 28px; width: 100%; max-width: 520px; max-height: 85vh; overflow-y: auto; transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.2); }
+  .modal-backdrop.active .modal-box { transform: scale(1) translateY(0); }
+  
+  table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 700px; } 
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; padding: 16px 16px; background: rgba(248, 250, 252, 0.5); border-bottom: 1px solid #e2e8f0; font-weight: 800; }
+  th:first-child { border-top-left-radius: 16px; } th:last-child { border-top-right-radius: 16px; text-align: right; }
+  td { padding: 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: middle; transition: 0.2s; }
+  td:last-child { text-align: right; }
+  tr.row-hover:hover td { background: #f8fafc; cursor: pointer; }
+  
+  .toast { position: fixed; top: 24px; left: 50%; transform: translate(-50%, -20px) scale(0.95); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 14px 24px; border-radius: 999px; font-weight: 600; font-size: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); z-index: 400; opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; gap: 10px; align-items: center; border: 1px solid rgba(255,255,255,0.1); pointer-events: none; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  
+  .avatar { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); border: 2px solid #fff; }
+  .prod-img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #f1f5f9; flex-shrink: 0; border: 1px solid #e2e8f0; }
+  
+  .section-view { display: none; opacity: 0; transition: opacity 0.3s ease; } 
+  .section-view.active { display: block; opacity: 1; animation: fadeIn 0.4s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="boot-loading" style="position:fixed;inset:0;z-index:999;background:#f8fafc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-[20px] flex items-center justify-center shadow-2xl shadow-blue-500/30">
+    <i class="ph-bold ph-shield-check text-white text-3xl"></i>
+  </div>
+  <div class="spinner border-t-blue-600 w-8 h-8"></div>
+  <p id="boot-text" class="text-slate-500 font-medium text-sm">Authenticating...</p>
+</div>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div id="login-view" class="min-h-screen flex items-center justify-center p-6 hidden">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-500/30">
+        <i class="ph-bold ph-shield-check text-white text-4xl"></i>
+      </div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-slate-800">Admin Panel</h1>
+      <p class="text-slate-500 font-medium mt-2">Trade Shipping Hub</p>
+    </div>
+    <div class="glass-panel rounded-[32px] p-8">
+      <form id="login-form" onsubmit="return window.doAdminLogin(event)">
+        <div class="space-y-4 mb-6">
+          <div>
+            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2 ml-1">Admin Email</label>
+            <input type="email" id="admin-email" class="glass-input" placeholder="admin@domain.com" required>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-2 ml-1">Password</label>
+            <input type="password" id="admin-password" class="glass-input" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div id="login-error" class="hidden bg-red-50 border border-red-100 text-red-600 text-[13px] font-bold p-4 rounded-2xl mb-5 text-center shadow-sm"></div>
+        <button type="submit" id="login-btn" class="btn-primary w-full flex items-center justify-center gap-2 py-4 text-[15px]">
+          <span id="login-btn-text">Sign In Securely</span><div id="login-spinner" class="spinner hidden border-t-white"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= BOOTSTRAP SCREEN ================= -->
+<div id="bootstrap-view" class="min-h-screen hidden items-center justify-center p-6">
+  <div class="glass-panel rounded-[32px] p-10 max-w-sm w-full text-center">
+    <div class="w-20 h-20 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-orange-100"><i class="ph-bold ph-key text-4xl"></i></div>
+    <h2 class="text-2xl font-extrabold mb-3 text-slate-800">Setup Required</h2>
+    <p class="text-sm text-slate-500 mb-8 leading-relaxed font-medium">No admin assigned yet. Claim access for <br><span id="bootstrap-email" class="font-bold text-slate-800 bg-slate-100 px-2 py-1 rounded-md mt-2 inline-block"></span>?</p>
+    <button class="btn-primary w-full mb-3 py-3.5" onclick="window.claimAdmin()">Claim Admin Access</button>
+    <button class="btn-soft w-full py-3.5" onclick="window.doAdminLogout()">Sign Out</button>
+  </div>
+</div>
+
+<!-- ================= ACCESS DENIED ================= -->
+<div id="denied-view" class="min-h-screen hidden items-center justify-center p-6">
+  <div class="glass-panel rounded-[32px] p-10 max-w-sm w-full text-center">
+    <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-100"><i class="ph-bold ph-lock-key text-4xl"></i></div>
+    <h2 class="text-2xl font-extrabold mb-3 text-slate-800">Access Denied</h2>
+    <p class="text-sm text-slate-500 mb-8 font-medium">You are not authorized to view this administrative panel.</p>
+    <button class="btn-soft w-full py-3.5 text-red-500 border-red-100 hover:bg-red-50" onclick="window.doAdminLogout()">Sign Out securely</button>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard-view" class="hidden min-h-screen flex-col md:flex-row w-full">
+  
+  <!-- Sidebar -->
+  <aside class="w-full md:w-[280px] bg-white/60 backdrop-blur-xl border-r border-white shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col shrink-0 md:min-h-screen z-40 relative">
+    <div class="flex items-center justify-between px-5 py-5 md:px-8 md:py-8">
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Admin Hub</h1>
+      </div>
+      
+      <!-- Mobile Top Actions -->
+      <div class="md:hidden flex items-center gap-2">
+        <button class="w-9 h-9 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 text-blue-600 click-anim" onclick="window.refreshApp(this)">
+          <i class="ph-bold ph-arrows-clockwise text-lg"></i>
+        </button>
+        <button class="w-9 h-9 flex items-center justify-center bg-red-50 rounded-xl shadow-sm border border-red-100 text-red-500 click-anim" onclick="window.doAdminLogout()">
+          <i class="ph-bold ph-sign-out text-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <nav class="flex md:flex-col overflow-x-auto md:overflow-visible flex-none md:flex-1 p-3 md:p-6 gap-2 border-b border-white md:border-b-0 no-scrollbar">
+      <div class="nav-item active flex items-center gap-3 px-4 py-3.5 whitespace-nowrap click-anim" onclick="window.showSection('overview', this, 'Dashboard Overview')"><i class="ph-bold ph-squares-four text-[20px]"></i><span class="font-bold text-[14px]">Overview</span></div>
+      <div class="nav-item flex items-center gap-3 px-4 py-3.5 whitespace-nowrap click-anim" onclick="window.showSection('users', this, 'User Management')"><i class="ph-bold ph-users text-[20px]"></i><span class="font-bold text-[14px]">Users</span></div>
+      <div class="nav-item flex items-center gap-3 px-4 py-3.5 whitespace-nowrap click-anim" onclick="window.showSection('catalog', this, 'Catalog & Products')"><i class="ph-bold ph-shopping-bag-open text-[20px]"></i><span class="font-bold text-[14px]">Catalog</span></div>
+      <div class="nav-item flex items-center gap-3 px-4 py-3.5 whitespace-nowrap click-anim" onclick="window.showSection('orders', this, 'Order Tracking')"><i class="ph-bold ph-package text-[20px]"></i><span class="font-bold text-[14px]">Orders</span></div>
+      <div class="nav-item flex items-center gap-3 px-4 py-3.5 whitespace-nowrap click-anim" onclick="window.showSection('ledger', this, 'Financial Ledger')"><i class="ph-bold ph-receipt text-[20px]"></i><span class="font-bold text-[14px]">Ledger</span></div>
+    </nav>
+    
+    <div class="hidden md:block p-6 mt-auto">
+      <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mb-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-md border-2 border-white" id="desktop-avatar">A</div>
+        <div class="overflow-hidden">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Logged in as</p>
+          <p class="text-[12px] text-slate-700 font-bold truncate" id="sidebar-admin-email">—</p>
+        </div>
+      </div>
+      <button class="btn-soft w-full flex items-center justify-center gap-2 text-red-500 border-red-100 hover:bg-red-50 hover:border-red-200 py-3" onclick="window.doAdminLogout()"><i class="ph-bold ph-sign-out"></i> Secure Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 p-4 md:p-8 w-full max-w-[1600px] mx-auto overflow-y-auto" id="main-scroll">
+    
+    <!-- DESKTOP TOP HEADER -->
+    <header class="hidden md:flex justify-between items-center glass-panel p-4 px-6 rounded-2xl mb-8 sticky top-4 z-30">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight" id="desktop-page-title">Dashboard Overview</h2>
+            <p class="text-xs font-medium text-slate-500 mt-0.5">Real-time data sync active</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="btn-soft flex items-center gap-2 text-blue-600 border-blue-100 hover:bg-blue-50 py-2.5 px-4 shadow-sm click-anim" onclick="window.refreshApp(this)">
+                <i class="ph-bold ph-arrows-clockwise text-lg transition-transform duration-500"></i> Refresh Data
+            </button>
+        </div>
+    </header>
+
+    <!-- OVERVIEW -->
+    <section id="section-overview" class="section-view active">
+      
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <div class="glass-panel rounded-3xl p-6 relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="flex justify-between items-start relative z-10 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center"><i class="ph-bold ph-users text-xl"></i></div>
+          </div>
+          <p class="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-1 relative z-10">Total Users</p>
+          <p class="text-3xl font-extrabold text-slate-800 relative z-10" id="ov-users">0</p>
+        </div>
+        
+        <div class="glass-panel rounded-3xl p-6 relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="flex justify-between items-start relative z-10 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center"><i class="ph-bold ph-wallet text-xl"></i></div>
+          </div>
+          <p class="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-1 relative z-10">Total Balance</p>
+          <p class="text-3xl font-extrabold text-green-600 relative z-10">$<span id="ov-balance">0.00</span></p>
+        </div>
+        
+        <div class="glass-panel rounded-3xl p-6 relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="flex justify-between items-start relative z-10 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-500 flex items-center justify-center"><i class="ph-bold ph-clock text-xl"></i></div>
+          </div>
+          <p class="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-1 relative z-10">Pending Approval</p>
+          <p class="text-3xl font-extrabold text-orange-500 relative z-10" id="ov-pending">0</p>
+        </div>
+        
+        <div class="glass-panel rounded-3xl p-6 relative overflow-hidden group">
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="flex justify-between items-start relative z-10 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center"><i class="ph-bold ph-shopping-bag-open text-xl"></i></div>
+          </div>
+          <p class="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-1 relative z-10">Catalog Items</p>
+          <p class="text-3xl font-extrabold text-purple-600 relative z-10" id="ov-prods">0</p>
+        </div>
+      </div>
+      
+      <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden">
+        <div class="absolute right-0 bottom-0 w-64 h-64 bg-gradient-to-tl from-blue-50 to-transparent rounded-tl-full opacity-50 pointer-events-none"></div>
+        <h3 class="font-extrabold mb-6 text-sm uppercase tracking-widest text-slate-500">Quick Actions Hub</h3>
+        <div class="flex flex-wrap gap-4 relative z-10">
+          <button class="btn-primary flex items-center gap-2 py-3 px-6" onclick="window.showSection('users'); window.openAddUserModal()"><i class="ph-bold ph-user-plus text-lg"></i> Create New User</button>
+          <button class="btn-green shadow-lg shadow-green-500/30 flex items-center gap-2 py-3 px-6" onclick="window.openQuickTransferModal()"><i class="ph-bold ph-currency-dollar text-lg"></i> Quick Transfer</button>
+          <button class="btn-soft flex items-center gap-2 py-3 px-6" onclick="window.showSection('catalog'); window.autoSeedCatalog()"><i class="ph-bold ph-magic-wand text-lg text-purple-600"></i> Auto-Generate 30 Orders</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="section-users" class="section-view">
+      <div class="md:hidden flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Users</h2>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div class="relative w-full md:w-auto md:min-w-[320px]">
+          <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+          <input type="text" id="user-search" class="glass-input pl-11 py-3" placeholder="Search name, email, or username..." oninput="window.renderUsers()">
+        </div>
+        <button class="btn-primary flex items-center gap-2 py-3 md:w-auto w-full justify-center" onclick="window.openAddUserModal()"><i class="ph-bold ph-user-plus text-lg"></i> Add User</button>
+      </div>
+      <div class="glass-panel rounded-[24px] overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table id="users-table">
+            <thead><tr><th>User Profile</th><th>Contact Info</th><th>Balance</th><th>Earnings</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+        <div id="users-empty" class="text-center py-16 hidden">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400"><i class="ph-fill ph-users text-2xl"></i></div>
+            <p class="text-slate-500 font-bold">No users found in database.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATALOG -->
+    <section id="section-catalog" class="section-view">
+      <div class="md:hidden flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Catalog</h2>
+      </div>
+      <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+        <div class="glass-panel rounded-[24px] p-5 h-fit">
+          <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+            <h3 class="font-extrabold text-xs uppercase tracking-widest text-slate-500">Categories</h3>
+            <button class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center click-anim border border-blue-100 shadow-sm hover:bg-blue-100 transition-colors" onclick="window.openAddCategoryModal()"><i class="ph-bold ph-plus"></i></button>
+          </div>
+          <div id="category-list" class="space-y-1.5"></div>
+          
+          <button class="w-full mt-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 py-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 transition click-anim" onclick="window.autoSeedCatalog()">
+              <i class="ph-bold ph-magic-wand text-lg"></i> Generate 30 Orders
+          </button>
+        </div>
+        <div class="glass-panel rounded-[24px] p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+            <h3 class="font-extrabold text-lg text-slate-800" id="products-heading">Select a category</h3>
+            <div class="flex gap-2">
+              <button class="btn-primary text-[13px] py-2 px-4 flex items-center gap-2" id="btn-add-product" onclick="window.openAddProductModal()" disabled><i class="ph-bold ph-plus"></i> Add Item</button>
+            </div>
+          </div>
+          <div id="products-grid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+          <div id="products-empty" class="text-center py-16">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400"><i class="ph-fill ph-package text-2xl"></i></div>
+            <p class="text-slate-500 font-bold">Pick a category on the left to view items.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section id="section-orders" class="section-view">
+      <div class="md:hidden flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Orders</h2>
+      </div>
+      <div class="flex flex-wrap gap-4 mb-6">
+        <div class="relative w-full md:w-auto md:min-w-[320px]">
+          <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+          <input type="text" id="order-search" class="glass-input pl-11 py-3" placeholder="Search orders..." oninput="window.renderOrders()">
+        </div>
+      </div>
+      <div class="glass-panel rounded-[24px] overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>User</th><th>Item</th><th>Price</th><th>Status</th><th>Assigned Date</th><th>Actions</th></tr></thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+        <div id="orders-empty" class="text-center py-16 hidden">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400"><i class="ph-fill ph-shopping-cart text-2xl"></i></div>
+            <p class="text-slate-500 font-bold">No orders found.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEDGER -->
+    <section id="section-ledger" class="section-view">
+      <div class="md:hidden flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Ledger</h2>
+      </div>
+      <div class="glass-panel rounded-[24px] overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th>User</th><th>Transaction Type</th><th>Amount</th><th>Balance After</th><th>Note</th><th>Date & Time</th></tr></thead>
+            <tbody id="ledger-tbody"></tbody>
+          </table>
+        </div>
+        <div id="ledger-empty" class="text-center py-16 hidden">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400"><i class="ph-fill ph-receipt text-2xl"></i></div>
+            <p class="text-slate-500 font-bold">No transactions yet.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast-root"></div><div id="modal-root"></div>
+
+<!-- Firebase Config -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBRUO6gahtj_4ARfj2zCwosKcpibjyDWH8",
+    authDomain: "trade-shipping-e9469.firebaseapp.com",
+    databaseURL: "https://trade-shipping-e9469-default-rtdb.firebaseio.com",
+    projectId: "trade-shipping-e9469",
+    storageBucket: "trade-shipping-e9469.firebasestorage.app",
+    messagingSenderId: "849951984417",
+    appId: "1:849951984417:web:b46cad4497e3f639150c60"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+const secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
+const secondaryAuth = secondaryApp.auth();
+
+let bootHidden = false;
+function hideBootLoading() {
+  if(bootHidden) return; bootHidden = true;
+  const el = document.getElementById('boot-loading'); if(el) { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }
+}
+
+// Failsafe in case network hangs forever
+setTimeout(() => {
+    if(!bootHidden) {
+        document.getElementById('boot-text').innerText = "Network is taking a while...";
+        setTimeout(hideBootLoading, 2000); 
+    }
+}, 4000);
+
+let usersCache = {}, categoriesCache = {}, productsCache = {}, ordersFlat = [], ledgerFlat = [], selectedCategoryId = null, listenersAttached = false;
+const DEFAULT_ADMIN_EMAIL = "tradeshipping@hotmail.com";
+
+// ================= ROBUST DATA FORMATTERS =================
+function toast(msg, isError) {
+  const root = document.getElementById('toast-root'); const div = document.createElement('div'); div.className = 'toast';
+  div.innerHTML = `<i class="ph-fill ${isError ? 'ph-warning-circle text-red-400' : 'ph-check-circle text-green-400'} text-xl"></i> ${msg}`;
+  root.appendChild(div); setTimeout(() => div.classList.add('show'), 10);
+  setTimeout(() => { div.classList.remove('show'); setTimeout(() => div.remove(), 300); }, 3200);
+}
+
+function fmtMoney(n) { const val = Number(n); return (isNaN(val) ? 0 : val).toFixed(2); }
+function fmtDate(ts) { if(!ts) return '—'; const d = new Date(ts); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+function initials(name) { try { return String(name || 'U').trim().substring(0,2).toUpperCase(); } catch(e){ return 'U'; } }
+function esc(s) { return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function taskStateBadge(state) {
+    state = String(state || 'pending').toLowerCase();
+    if(state === 'pending') return `<span class="badge badge-gray"><i class="ph-fill ph-clock"></i> Pending</span>`;
+    if(state === 'approved') return `<span class="badge badge-blue"><i class="ph-fill ph-check-circle"></i> Approved</span>`;
+    return `<span class="badge badge-purple"><i class="ph-fill ph-package"></i> Allocated</span>`;
+}
+// ==========================================================
+
+function showOnly(id) {
+  ['login-view','bootstrap-view','denied-view','dashboard-view'].forEach(v => {
+    const el = document.getElementById(v);
+    if(el) {
+        if(v === id) { el.classList.remove('hidden'); el.style.display = 'flex'; } 
+        else { el.classList.add('hidden'); el.style.display = 'none'; }
+    }
+  });
+}
+
+window.refreshApp = function(btn) {
+    if(btn) { const icon = btn.querySelector('i'); if(icon) icon.classList.add('animate-spin'); }
+    toast('Syncing fresh data from database...');
+    setTimeout(() => { window.location.reload(); }, 600);
+};
+
+window.doAdminLogin = async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('admin-email').value.trim(); const pass = document.getElementById('admin-password').value;
+  const errBox = document.getElementById('login-error'); const btnText = document.getElementById('login-btn-text');
+  const spinner = document.getElementById('login-spinner'); const btn = document.getElementById('login-btn');
+  errBox.classList.add('hidden');
+  if(email.toLowerCase() !== DEFAULT_ADMIN_EMAIL.toLowerCase() || pass !== "King1122@") { errBox.innerText = "Incorrect credentials."; errBox.classList.remove('hidden'); return false; }
+  btnText.classList.add('hidden'); spinner.classList.remove('hidden'); btn.disabled = true;
+
+  const safetyTimeout = setTimeout(() => {
+      errBox.innerText = "Connection timeout. Please make sure you are running this file directly on your computer browser, not inside an App preview.";
+      errBox.classList.remove('hidden'); btnText.classList.remove('hidden'); spinner.classList.add('hidden'); btn.disabled = false;
+  }, 8000);
+
+  try { 
+      await auth.signInWithEmailAndPassword(DEFAULT_ADMIN_EMAIL, "King1122@"); 
+      clearTimeout(safetyTimeout);
+  } catch(err) {
+    if(err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+      try { await auth.createUserWithEmailAndPassword(DEFAULT_ADMIN_EMAIL, "King1122@"); clearTimeout(safetyTimeout); return false; } 
+      catch(ce) { clearTimeout(safetyTimeout); errBox.innerText = ce.message; errBox.classList.remove('hidden'); btnText.classList.remove('hidden'); spinner.classList.add('hidden'); btn.disabled = false; return false; }
+    }
+    clearTimeout(safetyTimeout);
+    errBox.innerText = err.message; errBox.classList.remove('hidden'); btnText.classList.remove('hidden'); spinner.classList.add('hidden'); btn.disabled = false;
+  }
+  return false;
+};
+
+window.doAdminLogout = function() { auth.signOut(); };
+window.claimAdmin = async function() {
+  const user = auth.currentUser; if(!user) return;
+  try { await db.ref('admins/' + user.uid).set(true); toast('Admin access claimed'); checkAccess(user); } catch(err) { toast('Error: ' + err.message, true); }
+};
+
+async function checkAccess(user) {
+  try {
+      const adminsSnap = await db.ref('admins').once('value'); 
+      const admins = adminsSnap.val() || {};
+      
+      const sMail = document.getElementById('sidebar-admin-email'); if(sMail) sMail.innerText = user.email || '';
+      const dAv = document.getElementById('desktop-avatar'); if(dAv) dAv.innerText = initials(user.email || 'Admin');
+      
+      if(admins[user.uid]) { 
+          showOnly('dashboard-view'); attachListeners(); 
+      }
+      else if(Object.keys(admins).length === 0 && user.email.toLowerCase() === DEFAULT_ADMIN_EMAIL) { 
+          await db.ref('admins/' + user.uid).set(true); 
+          showOnly('dashboard-view'); attachListeners(); 
+      }
+      else if(user.email.toLowerCase() !== DEFAULT_ADMIN_EMAIL) { 
+          auth.signOut(); showOnly('login-view'); toast("Unauthorized admin account.", true);
+      }
+      else { 
+          showOnly('denied-view'); 
+      }
+  } catch(error) {
+      showOnly('login-view');
+      toast("Database Error: Check Firebase Rules", true);
+  }
+}
+
+try {
+    auth.onAuthStateChanged((user) => { 
+        hideBootLoading(); 
+        if(user) {
+            checkAccess(user); 
+        } else { 
+            showOnly('login-view'); 
+            listenersAttached = false; 
+        }
+    }, (error) => {
+        hideBootLoading();
+        showOnly('login-view');
+        toast("Firebase Auth Error: " + error.message, true);
+    });
+} catch(err) {
+    hideBootLoading();
+    showOnly('login-view');
+    toast("System Error: " + err.message, true);
+}
+
+window.showSection = function(name, el, title) { 
+    document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active')); 
+    const section = document.getElementById('section-' + name);
+    if(section) section.classList.add('active'); 
+    
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
+    if(el) el.classList.add('active'); 
+    
+    const pageTitle = document.getElementById('desktop-page-title');
+    if(pageTitle && title) pageTitle.innerText = title;
+};
+
+function attachListeners() {
+  if(listenersAttached) return; listenersAttached = true;
+  db.ref('users').on('value', snap => { usersCache = snap.val() || {}; renderUsers(); renderOverview(); refreshAssignModalUserOptions(); });
+  db.ref('categories').on('value', snap => { categoriesCache = snap.val() || {}; renderCategories(); renderOverview(); });
+  db.ref('products').on('value', snap => { productsCache = snap.val() || {}; renderProducts(); renderOverview(); });
+  db.ref('orders').on('value', snap => { const val = snap.val() || {}; ordersFlat = []; Object.keys(val).forEach(uid => Object.keys(val[uid]).forEach(key => ordersFlat.push({ uid, key, ...val[uid][key] }))); ordersFlat.sort((a,b) => (b.assignedAt||0) - (a.assignedAt||0)); renderOrders(); renderOverview(); });
+  db.ref('transactions').on('value', snap => { const val = snap.val() || {}; ledgerFlat = []; Object.keys(val).forEach(uid => Object.keys(val[uid]).forEach(key => ledgerFlat.push({ uid, key, ...val[uid][key] }))); ledgerFlat.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)); renderLedger(); });
+}
+
+function renderOverview() {
+  const usersCount = Object.keys(usersCache).length;
+  const uEl = document.getElementById('ov-users'); if(uEl) uEl.innerText = usersCount;
+  
+  // Safe balance calculation
+  let totalBal = 0;
+  let pendingCount = 0;
+  Object.values(usersCache).forEach(u => {
+      if(u && typeof u === 'object') {
+          totalBal += (Number(u.balance) || 0);
+          if(String(u.taskState||'pending').toLowerCase() === 'pending') pendingCount++;
+      } else {
+          pendingCount++; // Count empty/string nodes as pending
+      }
+  });
+  
+  const bEl = document.getElementById('ov-balance'); if(bEl) bEl.innerText = fmtMoney(totalBal);
+  const pEl = document.getElementById('ov-pending'); if(pEl) pEl.innerText = pendingCount;
+  
+  let prodCount = 0; Object.values(productsCache).forEach(c => prodCount += Object.keys(c).length); 
+  const prEl = document.getElementById('ov-prods'); if(prEl) prEl.innerText = prodCount;
+}
+
+function openModal(html) { const root = document.getElementById('modal-root'); root.innerHTML = `<div class="modal-backdrop" id="active-modal"><div class="modal-box">${html}</div></div>`; requestAnimationFrame(() => document.getElementById('active-modal').classList.add('active')); }
+window.closeModal = function() { const m = document.getElementById('active-modal'); if(!m) return; m.classList.remove('active'); setTimeout(() => { document.getElementById('modal-root').innerHTML = ''; }, 300); };
+
+
+// ================= USERS TABLE - ABSOLUTELY SHOWS EVERY NODE =================
+window.renderUsers = function() {
+  const tbody = document.getElementById('users-tbody');
+  const emptyView = document.getElementById('users-empty');
+  if(!tbody || !emptyView) return;
+  
+  const q = (document.getElementById('user-search')?.value || '').toLowerCase().trim();
+  
+  // 1. Convert to array and SALVAGE any bad nodes
+  let entries = Object.entries(usersCache).map(([uid, u]) => {
+      // If the node is just a string (like someone typed an email manually into DB)
+      if (typeof u === 'string') return [uid, { email: u }];
+      // If the node is completely empty/null
+      if (!u || typeof u !== 'object') return [uid, {}];
+      // Otherwise it's normal
+      return [uid, u];
+  });
+  
+  // 2. Filter by search text
+  if (q) {
+      entries = entries.filter(([uid, u]) => {
+          const name = String(u.fullName || '').toLowerCase();
+          const email = String(u.email || '').toLowerCase();
+          const uname = String(u.username || '').toLowerCase();
+          return name.includes(q) || email.includes(q) || uname.includes(q) || uid.toLowerCase().includes(q);
+      });
+  }
+  
+  // 3. Sort alphabetically (Fallback to Email, then UID if they have no name)
+  entries.sort((a,b) => {
+      const nameA = String(a[1].fullName || a[1].email || a[0]).toLowerCase();
+      const nameB = String(b[1].fullName || b[1].email || b[0]).toLowerCase();
+      return nameA.localeCompare(nameB);
+  });
+  
+  emptyView.classList.toggle('hidden', entries.length > 0);
+  const rowsHTML = [];
+  
+  // 4. Render loop
+  for(const [uid, u] of entries) {
+      try {
+          // SMART FALLBACKS: If they don't have a name, show their email in bold. If no email, show ID.
+          const bestDisplayMain = u.fullName ? u.fullName : (u.email ? u.email : `User ID: ${uid.substring(0,8)}...`);
+          const bestDisplaySub = u.fullName ? (u.email || 'No email') : (u.username ? `@${u.username}` : 'Incomplete Profile');
+          const safeInitials = esc(initials(u.fullName || u.email || 'U'));
+          
+          const safeBalance = fmtMoney(u.balance);
+          const safeEarnings = fmtMoney(u.earnings);
+          const safeState = taskStateBadge(u.taskState);
+          const safeBanned = u.banned ? '<span class="badge badge-red">Banned</span>' : '';
+
+          rowsHTML.push(`
+            <tr class="row-hover" onclick="window.openUserDetail('${uid}')">
+              <td>
+                <div class="flex items-center gap-4">
+                  <div class="avatar">${safeInitials}</div>
+                  <div>
+                    <p class="font-extrabold text-slate-800">${esc(String(bestDisplayMain))}</p>
+                    <p class="text-[12px] text-slate-400 font-medium mt-0.5">${esc(String(bestDisplaySub))}</p>
+                  </div>
+                </div>
+              </td>
+              <td><p class="text-[13px] text-slate-500 font-medium truncate max-w-[150px]">${esc(String(u.email || 'No Email Database Entry'))}</p></td>
+              <td class="font-extrabold text-slate-800">$${safeBalance}</td>
+              <td class="text-green-600 font-extrabold">$${safeEarnings}</td>
+              <td><div class="flex flex-wrap gap-1.5">${safeState} ${safeBanned}</div></td>
+              <td class="text-right">
+                <div class="flex gap-2 justify-end" onclick="event.stopPropagation()">
+                   <button class="bg-green-50 text-green-600 hover:bg-green-100 border border-green-200 text-[11px] font-bold py-2 px-3 rounded-xl transition click-anim" onclick="window.openMoneyModal('${uid}','deposit')">+$ Add</button>
+                   <button class="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 text-[11px] font-bold py-2 px-3 rounded-xl transition click-anim" onclick="window.openMoneyModal('${uid}','withdraw')">-$ Rem</button>
+                </div>
+              </td>
+            </tr>
+          `);
+      } catch (err) {
+          console.error("Critical error skipping rendering user: " + uid, err);
+      }
+  }
+  
+  tbody.innerHTML = rowsHTML.join('');
+};
+
+window.openAddUserModal = function() {
+  openModal(`<div class="p-8"><h3 class="text-xl font-extrabold mb-6 text-slate-800">Add New User</h3><div class="space-y-4"><input id="nu-name" class="glass-input" placeholder="Full Name"><input id="nu-username" class="glass-input" placeholder="Username"><input id="nu-email" type="email" class="glass-input" placeholder="Email"><input id="nu-password" type="password" class="glass-input" placeholder="Password (min 6 chars)"><input id="nu-balance" type="number" class="glass-input" placeholder="Starting Balance" value="0"></div><div class="flex gap-4 mt-8"><button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button><button class="btn-primary flex-1 py-3.5" onclick="window.submitAddUser()">Create User</button></div></div>`);
+};
+
+window.submitAddUser = async function() {
+  const email = document.getElementById('nu-email').value.trim(); const pass = document.getElementById('nu-password').value; const name = document.getElementById('nu-name').value.trim();
+  if(!email || pass.length < 6) return toast('Invalid email or short password', true);
+  try {
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pass);
+    await db.ref('users/' + cred.user.uid).set({ fullName: name, username: document.getElementById('nu-username').value.trim(), email: email, balance: parseFloat(document.getElementById('nu-balance').value)||0, earnings: 0, taskState: 'pending', createdAt: firebase.database.ServerValue.TIMESTAMP });
+    await secondaryAuth.signOut(); toast('User created successfully'); window.closeModal();
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.openUserDetail = function(uid) {
+  let u = usersCache[uid]; 
+  // Salvage bad object format
+  if (typeof u === 'string') u = { email: u };
+  if (!u || typeof u !== 'object') u = {};
+  
+  const bestNameDisplay = u.fullName || u.email || `User_${uid.substring(0,5)}`;
+  
+  openModal(`
+    <div class="p-8">
+      <div class="flex items-center gap-4 mb-8 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+        <div class="avatar w-14 h-14 text-lg border-4 border-white shadow-sm">${esc(initials(bestNameDisplay))}</div>
+        <div class="flex-1 min-w-0"><p class="font-extrabold text-xl truncate text-slate-800">${esc(String(bestNameDisplay))}</p><p class="text-[13px] text-slate-500 font-medium">${esc(String(u.email || 'No email saved'))}</p></div>
+        <button class="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-100 transition click-anim" onclick="window.closeModal()"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">Approval State</label>
+          <select id="ud-taskstate" class="glass-input font-semibold text-slate-700 bg-slate-50">
+            <option value="pending" ${String(u.taskState||'pending').toLowerCase()==='pending'?'selected':''}>Pending (Needs Approval)</option>
+            <option value="approved" ${String(u.taskState||'').toLowerCase()==='approved'?'selected':''}>Approved (Ready for tasks)</option>
+            <option value="allocated" ${String(u.taskState||'').toLowerCase()==='allocated'?'selected':''}>Allocated (Has Orders)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-8 flex flex-col gap-3">
+        <button class="btn-primary w-full py-4 text-[15px]" onclick="window.saveUserProfile('${uid}')">Save User State</button>
+        <button class="btn-soft w-full text-red-500 hover:bg-red-50 border-red-100 hover:border-red-200 flex items-center justify-center gap-2 py-3" onclick="window.deleteUserRecord('${uid}')"><i class="ph-bold ph-trash"></i> Delete User Entirely</button>
+      </div>
+    </div>
+  `);
+};
+
+window.saveUserProfile = async function(uid) { try { await db.ref('users/' + uid).update({ taskState: document.getElementById('ud-taskstate').value }); toast('User State Updated'); window.closeModal(); } catch(e) { toast('Error saving data', true); } };
+window.deleteUserRecord = async function(uid) { if(confirm("Permanently delete this user's data?")) { try { await db.ref('users/' + uid).remove(); toast('User Deleted'); window.closeModal(); } catch(e) { toast('Error deleting', true); } } };
+
+// ================= MONEY ADD / REMOVE =================
+window.openMoneyModal = function(uid, mode) {
+  const isDeposit = mode === 'deposit';
+  let u = usersCache[uid]; if (typeof u === 'string') u = { email: u }; if(!u) u = {};
+  const displayName = u.fullName || u.email || `User (${uid.substring(0,5)})`;
+  
+  openModal(`
+    <div class="p-8">
+        <h3 class="text-xl font-extrabold mb-2 text-slate-800">${isDeposit?'Add':'Remove'} Money</h3>
+        <p class="text-[13px] text-slate-500 font-medium mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100">
+            Target User: <strong class="text-slate-700">${esc(String(displayName))}</strong> <br>
+            Current Balance: <strong class="text-slate-700">$${fmtMoney(u.balance)}</strong>
+        </p>
+        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2 ml-1">Amount</label>
+        <input id="mm-amount" type="number" step="0.01" min="0" class="glass-input mb-8 text-lg font-bold" placeholder="0.00">
+        <div class="flex gap-3">
+            <button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button>
+            <button class="${isDeposit?'btn-green':'btn-danger'} flex-1 py-3.5 text-[15px]" onclick="window.submitMoneyChange('${uid}', ${isDeposit})">Confirm</button>
+        </div>
+    </div>
+  `);
+};
+
+window.submitMoneyChange = async function(uid, isDeposit) {
+  const amtStr = document.getElementById('mm-amount').value;
+  const amt = parseFloat(amtStr);
+  
+  if(isNaN(amt) || amt <= 0) return toast('Please enter a valid number', true);
+  
+  let user = usersCache[uid];
+  if(typeof user === 'string') user = { email: user };
+  if(!user) user = {}; // Force it so we can push money to empty users
+
+  const currentBal = Number(user.balance) || 0;
+  const newBal = isDeposit ? (currentBal + amt) : (currentBal - amt);
+
+  try { 
+      await db.ref('users/' + uid).update({ balance: newBal }); 
+      await db.ref('transactions/' + uid).push({ 
+          type: isDeposit ? 'admin_deposit' : 'admin_withdraw', 
+          amount: isDeposit ? amt : -amt, 
+          balanceAfter: newBal, 
+          timestamp: firebase.database.ServerValue.TIMESTAMP 
+      }); 
+      toast(isDeposit ? 'Money Added Successfully' : 'Money Deducted Successfully'); 
+      window.closeModal(); 
+  } catch(e) { 
+      toast('Database Error: ' + e.message, true); 
+  }
+};
+
+window.openQuickTransferModal = function() {
+  openModal(`
+    <div class="p-8">
+        <h3 class="text-xl font-extrabold mb-2 text-slate-800">Quick Transfer</h3>
+        <p class="text-sm text-slate-500 mb-6 font-medium">Add or remove balance from any user instantly.</p>
+        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2 ml-1">Select User</label>
+        <select id="qt-user" class="glass-input mb-5 font-semibold text-slate-700 bg-slate-50">
+            <option value="">-- Choose User --</option>
+            ${Object.entries(usersCache).map(([uid, u]) => {
+                if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+                const dName = u.fullName || u.email || `User ID: ${uid.substring(0,5)}`;
+                return `<option value="${uid}">${esc(String(dName))} (Bal: $${fmtMoney(u.balance)})</option>`;
+            }).join('')}
+        </select>
+        <div class="flex gap-3 mb-5">
+            <label class="flex-1 flex items-center justify-center gap-2 text-[14px] font-bold text-green-700 bg-green-50 border border-green-200 rounded-xl p-3 cursor-pointer transition hover:bg-green-100">
+                <input type="radio" name="qt-action" value="add" checked> Add (+)
+            </label>
+            <label class="flex-1 flex items-center justify-center gap-2 text-[14px] font-bold text-red-700 bg-red-50 border border-red-200 rounded-xl p-3 cursor-pointer transition hover:bg-red-100">
+                <input type="radio" name="qt-action" value="remove"> Remove (-)
+            </label>
+        </div>
+        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-2 ml-1">Amount (USD)</label>
+        <input id="qt-amount" type="number" step="0.01" min="0" class="glass-input mb-8 text-lg font-bold" placeholder="0.00">
+        <div class="flex gap-3">
+            <button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button>
+            <button class="btn-primary flex-1 py-3.5 text-[15px]" onclick="window.submitQuickTransfer()">Execute Transfer</button>
+        </div>
+    </div>
+  `);
+};
+
+window.submitQuickTransfer = async function() {
+  const uid = document.getElementById('qt-user').value; 
+  const actionNode = document.querySelector('input[name="qt-action"]:checked');
+  const isDeposit = actionNode.value === 'add'; 
+  const amt = parseFloat(document.getElementById('qt-amount').value);
+  
+  if(!uid) return toast('Select a user first', true);
+  if(isNaN(amt) || amt <= 0) return toast('Enter a valid amount', true);
+  
+  let user = usersCache[uid];
+  if(typeof user === 'string') user = { email: user }; if(!user) user = {};
+  
+  const currentBal = Number(user.balance) || 0; 
+  const newBal = isDeposit ? (currentBal + amt) : (currentBal - amt);
+  
+  try { 
+      await db.ref('users/' + uid).update({ balance: newBal }); 
+      await db.ref('transactions/' + uid).push({ 
+          type: isDeposit ? 'admin_deposit' : 'admin_withdraw', 
+          amount: isDeposit ? amt : -amt, 
+          balanceAfter: newBal, 
+          timestamp: firebase.database.ServerValue.TIMESTAMP 
+      }); 
+      toast(isDeposit ? 'Transfer Sent' : 'Transfer Deducted'); 
+      window.closeModal(); 
+  } catch(e) { 
+      toast('Database Error', true); 
+  }
+};
+
+// ================= CATEGORIES & PRODUCTS =================
+window.renderCategories = function() {
+  const list = document.getElementById('category-list'); 
+  if(!list) return;
+  const entries = Object.entries(categoriesCache);
+  if(selectedCategoryId && !categoriesCache[selectedCategoryId]) selectedCategoryId = null;
+
+  list.innerHTML = entries.map(([id, c]) => `
+    <div class="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer click-anim transition-colors border ${selectedCategoryId===id ? 'bg-blue-50 text-blue-700 border-blue-100 shadow-sm' : 'hover:bg-slate-50 border-transparent text-slate-600'}" onclick="window.selectCategory('${id}')">
+      <span class="font-bold text-[14px] truncate">${esc(String(c.name || ''))}</span><span class="text-[11px] bg-white border border-slate-200 px-2 py-0.5 rounded-full font-bold shadow-sm">${Object.keys(productsCache[id]||{}).length}</span>
+    </div>
+  `).join(''); renderProducts();
+};
+window.selectCategory = function(id) { selectedCategoryId = id; renderCategories(); };
+
+window.renderProducts = function() {
+  const grid = document.getElementById('products-grid'); const heading = document.getElementById('products-heading');
+  const emptyMsg = document.getElementById('products-empty'); const addBtn = document.getElementById('btn-add-product');
+  if(!grid || !heading || !emptyMsg || !addBtn) return;
+  
+  if(!selectedCategoryId) { grid.innerHTML = ''; heading.innerText = 'Select a category'; emptyMsg.classList.remove('hidden'); addBtn.disabled = true; return; }
+  addBtn.disabled = false; heading.innerText = esc(String(categoriesCache[selectedCategoryId]?.name || ''));
+  const prods = productsCache[selectedCategoryId] || {}; const entries = Object.entries(prods);
+  emptyMsg.classList.toggle('hidden', entries.length > 0); 
+
+  grid.innerHTML = entries.map(([id, p]) => `
+    <div class="bg-white border border-slate-100 rounded-2xl p-4 flex gap-4 shadow-sm hover:shadow-md transition">
+      <img src="${esc(String(p.image||''))}" class="w-20 h-20 rounded-xl object-cover bg-slate-50 flex-shrink-0" onerror="this.style.opacity=0.3">
+      <div class="flex-1 min-w-0 flex flex-col justify-center">
+        <p class="font-extrabold text-[14px] truncate text-slate-800 mb-1">${esc(String(p.name||''))}</p>
+        <p class="text-[13px] font-bold text-green-600 mb-3">$${fmtMoney(p.price)}</p>
+        <div class="flex gap-2">
+          <button class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-[11px] font-bold transition click-anim flex-1 text-center" onclick="window.openAssignModal(null, '${selectedCategoryId}', '${id}')">Assign</button>
+          <button class="bg-slate-50 text-slate-600 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg text-[12px] font-bold transition click-anim" onclick="window.editProduct('${selectedCategoryId}', '${id}')"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button class="bg-red-50 text-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg text-[12px] font-bold transition click-anim text-red-500" onclick="window.deleteProduct('${selectedCategoryId}', '${id}')"><i class="ph-bold ph-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+};
+
+window.openAddCategoryModal = function() { openModal(`<div class="p-8"><h3 class="text-xl font-extrabold mb-6 text-slate-800">New Category</h3><input id="nc-name" class="glass-input" placeholder="e.g. Electronics"><div class="flex gap-4 mt-8"><button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button><button class="btn-primary flex-1 py-3.5" onclick="window.submitAddCategory()">Create Category</button></div></div>`); };
+window.submitAddCategory = async function() { const name = document.getElementById('nc-name').value.trim(); if(!name) return; try { const ref = db.ref('categories').push(); await ref.set({ name, createdAt: firebase.database.ServerValue.TIMESTAMP }); selectedCategoryId = ref.key; toast('Category created'); window.closeModal(); } catch(e) { toast('Error: '+e.message, true); } };
+
+window.openAddProductModal = function() {
+  if(!selectedCategoryId) return;
+  openModal(`<div class="p-8"><h3 class="text-xl font-extrabold mb-2 text-slate-800">Add Item</h3><p class="text-[13px] text-slate-500 mb-6 font-medium bg-slate-50 p-3 rounded-xl border border-slate-100">Category: <strong class="text-slate-700">${esc(String(categoriesCache[selectedCategoryId]?.name || ''))}</strong></p><div class="space-y-4"><input id="np-name" class="glass-input" placeholder="Item Name"><input id="np-image" class="glass-input" placeholder="Image URL (https://...)"><div class="flex gap-3"><input id="np-price" type="number" step="0.01" class="glass-input flex-1" placeholder="Price ($)"><input id="np-commission" type="number" step="0.01" class="glass-input flex-1" placeholder="Comm. (Opt)"></div></div><div class="flex gap-4 mt-8"><button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button><button class="btn-primary flex-1 py-3.5" onclick="window.submitAddProduct()">Save Item</button></div></div>`);
+};
+window.submitAddProduct = async function() {
+  const name = document.getElementById('np-name').value.trim(); const price = parseFloat(document.getElementById('np-price').value) || 0;
+  if(!name || !price) { toast('Name and price are required.', true); return; }
+  try { await db.ref('products/' + selectedCategoryId).push({ name, image: document.getElementById('np-image').value.trim(), price, commission: document.getElementById('np-commission').value ? parseFloat(document.getElementById('np-commission').value) : null, createdAt: firebase.database.ServerValue.TIMESTAMP }); toast('Item added'); window.closeModal(); } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.editProduct = function(catId, prodId) {
+  const p = productsCache[catId][prodId];
+  openModal(`<div class="p-8"><h3 class="text-xl font-extrabold mb-6 text-slate-800">Edit Item</h3><div class="space-y-4"><input id="ep-name" class="glass-input" value="${esc(String(p.name||''))}"><input id="ep-image" class="glass-input" value="${esc(String(p.image||''))}"><div class="flex gap-3"><input id="ep-price" type="number" step="0.01" class="glass-input flex-1" value="${p.price||0}"><input id="ep-commission" type="number" step="0.01" class="glass-input flex-1" value="${p.commission!=null?p.commission:''}"></div></div><div class="flex gap-4 mt-8"><button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button><button class="btn-primary flex-1 py-3.5" onclick="window.submitEditProduct('${catId}','${prodId}')">Save Changes</button></div></div>`);
+};
+window.submitEditProduct = async function(catId, prodId) { try { await db.ref('products/'+catId+'/'+prodId).update({ name: document.getElementById('ep-name').value.trim(), image: document.getElementById('ep-image').value.trim(), price: parseFloat(document.getElementById('ep-price').value)||0, commission: document.getElementById('ep-commission').value ? parseFloat(document.getElementById('ep-commission').value) : null }); toast('Item updated'); window.closeModal(); } catch(e) { toast('Error: '+e.message, true); } };
+window.deleteProduct = async function(catId, prodId) { if(confirm('Are you sure you want to delete this item?')) { try { await db.ref('products/'+catId+'/'+prodId).remove(); toast('Item deleted'); } catch(e) { toast('Error deleting', true); } } };
+
+// AUTO-GENERATE 30 ORDERS
+window.autoSeedCatalog = async function() {
+    toast("Generating 30 Orders... Please wait.");
+    try {
+        const catRef = db.ref('categories').push();
+        await catRef.set({ name: "Orders", createdAt: firebase.database.ServerValue.TIMESTAMP });
+        const catId = catRef.key;
+        
+        const items = [
+            {name: "Apple AirPods Pro", price: 249.00}, {name: "iPad Air 5th Gen", price: 599.00}, {name: "MacBook Pro 14", price: 1999.00}, {name: "Apple Watch Ultra", price: 799.00}, {name: "iPhone 15 Pro", price: 999.00},
+            {name: "Sony XM5 Headphones", price: 398.00}, {name: "Samsung 4K Smart TV", price: 450.00}, {name: "DJI Mini 3 Drone", price: 759.00}, {name: "Nintendo Switch OLED", price: 349.00}, {name: "PlayStation 5 Console", price: 499.00},
+            {name: "Xbox Series X", price: 499.00}, {name: "GoPro Hero 11", price: 399.00}, {name: "Logitech Brio", price: 149.00}, {name: "LG OLED C2 TV", price: 1200.00}, {name: "Kindle Paperwhite", price: 139.00},
+            {name: "Apple Magic Keyboard", price: 299.00}, {name: "Apple Pencil 2", price: 129.00}, {name: "Bose SoundLink", price: 149.00}, {name: "Sonos Arc Soundbar", price: 899.00}, {name: "Alienware Gaming Monitor", price: 899.00},
+            {name: "Razer DeathAdder Mouse", price: 69.00}, {name: "Corsair K95 Keyboard", price: 199.00}, {name: "Herman Miller Chair", price: 1495.00}, {name: "Secretlab Titan Chair", price: 549.00}, {name: "Shure SM7B Mic", price: 399.00},
+            {name: "Elgato Stream Deck", price: 149.00}, {name: "Philips Hue Starter Kit", price: 199.00}, {name: "Asus ROG Router", price: 249.00}, {name: "Netgear Orbi WiFi 6", price: 449.00}, {name: "Anker 737 PowerBank", price: 149.00}
+        ];
+        
+        const updates = {};
+        items.forEach((item, i) => {
+            const key = db.ref('products/' + catId).push().key;
+            updates['products/' + catId + '/' + key] = {
+                name: item.name, price: item.price,
+                image: `https://picsum.photos/seed/order${i}/200/200`,
+                commission: item.price * 0.05,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+        });
+        
+        await db.ref().update(updates);
+        selectedCategoryId = catId;
+        renderCategories();
+        toast("Success! 30 Orders generated.");
+    } catch(e) {
+        toast("Error: " + e.message, true);
+    }
+};
+
+// ================= ASSIGN ORDER =================
+let assignContext = { catId: null, prodId: null };
+window.openAssignModal = function(preselectedUid, catId, prodId) {
+  assignContext = { catId: catId || selectedCategoryId, prodId }; const product = (catId && prodId) ? productsCache[catId]?.[prodId] : null;
+  openModal(`
+    <div class="p-8">
+      <h3 class="text-xl font-extrabold mb-6 text-slate-800">Assign Order</h3>
+      ${product ? `<div class="flex items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-4 mb-6"><img src="${esc(String(product.image||''))}" class="w-16 h-16 rounded-xl object-cover bg-slate-50"><div><p class="font-extrabold text-[15px] text-slate-800">${esc(String(product.name||''))}</p><p class="text-[14px] font-bold text-green-600 mt-1">$${fmtMoney(product.price)} <span class="text-slate-400 text-xs font-normal">/ unit</span></p></div></div>` : `<p class="text-[13px] text-slate-500 mb-6 font-medium">Choose an item and a user to match an order.</p>`}
+      ${!product ? `<label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">Select Item</label><select id="am-product" class="glass-input mb-5 font-semibold text-slate-700 bg-slate-50 border-slate-200">${Object.entries(categoriesCache).map(([cid, c]) => `<optgroup label="${esc(String(c.name||''))}">${Object.entries(productsCache[cid]||{}).map(([pid, p]) => `<option value="${cid}::${pid}">${esc(String(p.name||''))} — $${fmtMoney(p.price)}</option>`).join('')}</optgroup>`).join('')}</select>` : ''}
+      
+      <div class="flex gap-3 mb-5">
+        <div class="flex-[2]">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">Assign to User</label>
+            <select id="am-user" class="glass-input font-semibold text-slate-700 bg-slate-50 border-slate-200">
+                ${Object.entries(usersCache).map(([uid, u]) => {
+                    if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+                    const dName = u.fullName || u.email || `User ID: ${uid.substring(0,5)}`;
+                    return `<option value="${uid}" ${uid===preselectedUid?'selected':''}>${esc(String(dName))}</option>`;
+                }).join('')}
+            </select>
+        </div>
+        <div class="flex-1">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">Quantity (1-10)</label>
+            <select id="am-quantity" class="glass-input font-semibold text-slate-700 bg-slate-50 border-slate-200 text-center">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+      </div>
+      
+      <div id="am-error" class="hidden bg-red-50 text-red-600 text-[13px] font-bold p-3 rounded-xl mt-5 text-center border border-red-100"></div>
+      <div class="flex gap-4 mt-8"><button class="btn-soft flex-1 py-3.5" onclick="window.closeModal()">Cancel</button><button class="btn-primary flex-1 py-3.5" onclick="window.submitAssignOrder()">Assign Order</button></div>
+    </div>
+  `);
+};
+function refreshAssignModalUserOptions() { 
+    const sel = document.getElementById('am-user'); 
+    if(sel) {
+        sel.innerHTML = Object.entries(usersCache).map(([uid, u]) => {
+            if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+            const dName = u.fullName || u.email || `User ID: ${uid.substring(0,5)}`;
+            return `<option value="${uid}" ${uid===sel.value?'selected':''}>${esc(String(dName))}</option>`;
+        }).join(''); 
+    }
+}
+
+window.submitAssignOrder = async function() {
+  const uid = document.getElementById('am-user').value; 
+  const qty = parseInt(document.getElementById('am-quantity').value) || 1;
+  const errBox = document.getElementById('am-error'); 
+  let catId = assignContext.catId, prodId = assignContext.prodId;
+  
+  if(!prodId) { const sel = document.getElementById('am-product').value; if(!sel) { errBox.innerText = 'Choose an item.'; errBox.classList.remove('hidden'); return; } [catId, prodId] = sel.split('::'); }
+  if(!uid) { errBox.innerText = 'Choose a user.'; errBox.classList.remove('hidden'); return; }
+  
+  const product = productsCache[catId]?.[prodId]; 
+  if(!product) { errBox.innerText = 'Item not found.'; errBox.classList.remove('hidden'); return; }
+  
+  // Calculate total price and commission based on quantity
+  const totalPrice = product.price * qty;
+  const unitComm = product.commission != null ? product.commission : (product.price * 0.05);
+  const totalComm = unitComm * qty;
+  const finalName = qty > 1 ? `${qty}x ${product.name}` : product.name;
+
+  try { 
+      await db.ref('orders/' + uid).push({ 
+          categoryId: catId, 
+          productId: prodId, 
+          name: finalName, 
+          image: product.image || '', 
+          price: totalPrice, 
+          commission: totalComm, 
+          quantity: qty,
+          status: 'assigned', 
+          assignedAt: firebase.database.ServerValue.TIMESTAMP 
+      }); 
+      
+      let checkUser = usersCache[uid]; if(typeof checkUser === 'string') checkUser = { email: checkUser };
+      if(String(checkUser?.taskState||'').toLowerCase() !== 'allocated') {
+          await db.ref('users/' + uid).update({ taskState: 'allocated' }); 
+      }
+      
+      toast(`Assigned ${qty} item(s) to user`); 
+      window.closeModal(); 
+  } catch(e) { 
+      toast('Error assigning order', true); 
+  }
+};
+
+// ================= ORDERS TAB =================
+window.renderOrders = function() {
+  const tbody = document.getElementById('orders-tbody'); 
+  const emptyView = document.getElementById('orders-empty');
+  if(!tbody || !emptyView) return;
+
+  const q = (document.getElementById('order-search')?.value || '').toLowerCase().trim(); 
+  const rows = ordersFlat.filter(o => { 
+      if(!q) return true; 
+      let u = usersCache[o.uid]; if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+      return String(u.fullName||'').toLowerCase().includes(q) || String(u.email||'').toLowerCase().includes(q) || String(o.name||'').toLowerCase().includes(q); 
+  });
+  
+  emptyView.classList.toggle('hidden', rows.length > 0);
+  tbody.innerHTML = rows.map(o => {
+    let u = usersCache[o.uid]; if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+    const dName = u.fullName || `User ID: ${o.uid.substring(0,5)}`;
+    
+    return `<tr><td><p class="font-extrabold text-slate-800">${esc(String(dName))}</p><p class="text-[11px] text-slate-400 font-medium mt-0.5">${esc(String(u.email||''))}</p></td><td><div class="flex items-center gap-3"><img src="${esc(String(o.image||''))}" class="w-10 h-10 rounded-lg object-cover bg-slate-50 border border-slate-100" onerror="this.style.visibility='hidden'"><span class="font-bold text-[13px] text-slate-700">${esc(String(o.name||''))}</span></div></td><td class="font-extrabold text-slate-800">$${fmtMoney(o.price)}</td><td>${String(o.status||'').toLowerCase() === 'assigned' ? '<span class="badge badge-purple">Assigned</span>' : String(o.status||'').toLowerCase() === 'completed' ? '<span class="badge badge-green">Completed</span>' : '<span class="badge badge-red">Cancelled</span>'}</td><td class="text-slate-500 font-medium text-[13px]">${fmtDate(o.assignedAt)}</td><td>${String(o.status||'').toLowerCase() === 'assigned' ? `<div class="flex gap-2"><button class="bg-green-50 text-green-600 border border-green-200 text-[11px] font-bold py-1.5 px-3 rounded-lg hover:bg-green-100 transition click-anim" onclick="window.setOrderStatus('${o.uid}','${o.key}','completed')">Complete</button><button class="bg-red-50 text-red-600 border border-red-200 text-[11px] font-bold py-1.5 px-3 rounded-lg hover:bg-red-100 transition click-anim" onclick="window.setOrderStatus('${o.uid}','${o.key}','cancelled')">Cancel</button></div>` : `<button class="text-[12px] font-bold text-slate-400 hover:text-red-500 transition" onclick="window.deleteOrder('${o.uid}','${o.key}')"><i class="ph-bold ph-trash text-lg"></i></button>`}</td></tr>`;
+  }).join('');
+};
+window.setOrderStatus = async function(uid, key, status) { try { const update = { status }; if(status === 'completed') update.completedAt = firebase.database.ServerValue.TIMESTAMP; await db.ref('orders/' + uid + '/' + key).update(update); toast('Order updated to ' + status); } catch(e) { toast('Error updating order', true); } };
+window.deleteOrder = async function(uid, key) { if(confirm('Delete this order record permanently?')) { try { await db.ref('orders/' + uid + '/' + key).remove(); toast('Order deleted'); } catch(e) { toast('Error deleting order', true); } } };
+
+// ================= LEDGER TAB =================
+window.renderLedger = function() {
+  const tbody = document.getElementById('ledger-tbody'); 
+  const emptyView = document.getElementById('ledger-empty');
+  if(!tbody || !emptyView) return;
+  
+  emptyView.classList.toggle('hidden', ledgerFlat.length > 0);
+  tbody.innerHTML = ledgerFlat.slice(0, 300).map(t => {
+    let u = usersCache[t.uid]; if (typeof u === 'string') u = { email: u }; if (!u) u = {};
+    const dName = u.fullName || `User ID: ${t.uid.substring(0,5)}`;
+    const typeLabel = { admin_deposit: 'Admin Deposit', admin_withdraw: 'Admin Withdraw', order_commission: 'Order Commission' }[t.type] || t.type;
+    return `<tr><td><p class="font-extrabold text-slate-800">${esc(String(dName))}</p><p class="text-[11px] text-slate-400 font-medium mt-0.5">${esc(String(u.email||''))}</p></td><td><span class="bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-md text-[11px] font-bold">${esc(String(typeLabel))}</span></td><td class="font-extrabold ${t.amount<0?'text-red-500':'text-green-600'}">${t.amount<0?'-':'+'}$${fmtMoney(Math.abs(t.amount))}</td><td class="font-bold text-slate-700">$${fmtMoney(t.balanceAfter)}</td><td class="text-slate-500 text-[13px] font-medium">${esc(String(t.note||''))}</td><td class="text-slate-400 font-medium text-[12px]">${fmtDate(t.timestamp)}</td></tr>`;
+  }).join('');
+};
+</script>
+</body>
+</html>
